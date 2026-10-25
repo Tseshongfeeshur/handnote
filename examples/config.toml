@@ -1,0 +1,29 @@
+# handnote 示例配置：只写想改的项，其余用默认值；拼错的键会直接报错。
+# 全部选项见 docs/options.md，全部默认值见 examples/config.example.toml。
+# 用法：handnote notes.md -c examples/config.toml
+
+seed = 42                        # 固定随机种子，同样的输入得到同样的照片
+
+[text]
+ink = "blue-black"               # black | blue | blue-black | red | green
+# fonts = ["fonts/LongCang-Regular.ttf", "fonts/LXGWWenKai-Regular.ttf"]   # 第一个为主字体，后面的补缺字
+# heading_font = "fonts/MaShanZheng-Regular.ttf"                           # 标题单独换字体
+heading_gap_before = [2, 1, 1, 0, 0, 0]   # 一到六级标题上方各空几行
+quote_indent = 2.0               # 引用段缩进（em）；三角标记画在首行缩进处
+quote_marker = "triangle"        # triangle | filled | none
+code_rule = true                 # 代码块左侧竖线
+warp_amp = 0.008                 # 字形扭曲，调大更潦草、设 0 则不扭曲
+line_wobble = 0.05               # 手绘线条（下划线、大括号、竖线）的抖动，设 0 则笔直
+
+[paper]
+kind = "ruled"                   # ruled | blank | grid
+# template = "examples/templates/legal-pad.toml"   # 自定义纸张模板
+stain_count = 2                  # 随机污渍最多几处，0 关闭
+
+[photo]
+corner_lift = 0.018              # 某个角翘起的幅度，0 关闭
+dog_ear_prob = 0.3               # 折角出现概率，0 关闭
+edge_bow_min = 0.004             # 每条边的弯曲幅度范围，max 设 0 则边缘笔直
+edge_bow_max = 0.010
+shadow = "random"                # random | phone | window | none
+noise = 3.0                      # 噪点，0 关闭

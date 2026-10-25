@@ -1,0 +1,15 @@
+# Paper template written by `handnote template`: edit the numbers freely.
+# Check the grid with:  handnote notes.md --paper legal-pad.toml --no-photo --keep-stages
+image = "legal-pad.jpg"
+
+[page]
+width = 1653
+height = 2338
+margin_top = 124
+margin_bottom = 130
+margin_left = 236
+margin_right = 100
+pitch = 58
+
+[paper]
+kind = "blank"   # the image already has its lines
