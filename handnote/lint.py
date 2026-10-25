@@ -201,7 +201,7 @@ def lint(md: str, cfg: Optional[Config] = None, fonts=None) -> Report:
                 add(WARN, line, "bold-heading", "整行加粗的短句像标题，会被画成双横线。想表示小标题就用 ###，不是标题就去掉加粗。")
             full = t.content
             if LATEX_CMD.search(full) or LATEX_DOLLAR.search(full):
-                add(ERROR, line, "latex", "不要写 LaTeX 公式（$…$、\\frac 等），不会被解析。用普通字符写公式，如 v = s / t、a² + b² = c²，或放进代码块。")
+                add(ERROR, line, "latex", "不要写 LaTeX 公式（$…$、\\frac 等），不会被解析。用普通字符写公式，如 v = s / t、a^2 + b^2 = c^2（会画成上标）、v_0（下标），或放进代码块。")
             if ctx == "list":
                 if _w(text) > 2 * cpl:
                     add(WARN, line, "long-item", f"这一条有 {int(_w(text))} 个字，超过两行。拆成两条，或只留要点。")
@@ -239,7 +239,7 @@ def lint(md: str, cfg: Optional[Config] = None, fonts=None) -> Report:
         from .layout import Layouter
 
         lay = Layouter(cfg, fonts)
-        pages = lay.run(P.parse(md, cfg.text.table_mode))
+        pages = lay.run(P.parse(md, cfg.text.table_mode, cfg.text.script_marks))
         rep.pages, rep.lines = len(pages), lay.k
         if quote_count > 2 * max(1, rep.pages):
             add(WARN, None, "many-quotes", "引用块太多。引用（三角标记）只用于老师特别强调的话，每页最多一两处。")

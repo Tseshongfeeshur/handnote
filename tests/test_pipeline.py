@@ -702,3 +702,32 @@ def test_slides_pdf_without_text(tmp_path):
     c = rl.Canvas(str(p)); c.rect(10, 10, 100, 100); c.showPage(); c.save()
     with pytest.raises(ValueError, match="提取不到文字"):
         note_from_pdf(C(), p)
+
+
+# ------------------------------------------------------------------ superscripts and subscripts
+
+def test_caret_and_underscore_become_scripts():
+    spans = P.parse("E = mc^2，10^-3，e^x，x^{n+1}，v_0，a_n，x_{i+1}")[0].spans
+    got = [(s.text, s.style.script) for s in spans if s.style.script]
+    assert got == [("2", 1), ("-3", 1), ("x", 1), ("n+1", 1), ("0", -1), ("n", -1), ("i+1", -1)]
+    assert "^" not in "".join(s.text for s in spans) and "{" not in "".join(s.text for s in spans)
+
+
+def test_script_marks_leave_other_uses_alone():
+    for md in ("a ^ b 和 snake_case_x", "`x^2`", "\\^2", "^2 开头", "file_name"):
+        spans = P.parse(md)[0].spans
+        assert not any(s.style.script for s in spans), md
+    assert "^" in "".join(s.text for s in P.parse("\\^2")[0].spans)
+    assert not any(s.style.script for s in P.parse("x^2", script_marks=False)[0].spans)
+
+
+def test_scripts_are_smaller_and_shifted():
+    els = [e for e in _elements("mc^2") if isinstance(e, Glyph)]
+    base, sup = els[1], els[2]
+    assert sup.ch == "2" and sup.size < 0.7 * base.size and sup.y < base.y - 0.2 * base.size
+    els = [e for e in _elements("v_0") if isinstance(e, Glyph)]
+    assert els[1].y > els[0].y
+    cfg = Config()
+    cfg.text.script_marks = False
+    pages = layout(P.parse("mc^2", cfg.text.table_mode, cfg.text.script_marks), cfg, FONTS)
+    assert _text([e for p in pages for e in p.elements]) == "mc^2"

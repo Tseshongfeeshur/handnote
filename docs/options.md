@@ -45,6 +45,10 @@
 | `label_max_chars` | `8` | 0 ~ 12；0 为不把标签挪到括号尖角左侧 | 列表前“短标签：”最长多少字时才挪到括号尖端左侧 |
 | `softbreak` | `auto` | auto \| newline | 段内换行：auto 像 Markdown 一样合并，newline 保留 |
 | `table_mode` | `list` | list \| skip | 表格：list 按行转成括号列表，skip 直接丢弃（表格线永远不画） |
+| `script_marks` | `True` | true \| false | 把 x^2、10^-3、x^{n+1} 画成上标，v_0、a_n、x_{i+1} 画成下标；关闭则原样显示 ^ 和 _ |
+| `script_scale` | `0.62` | 0.5 ~ 0.8 | 上下标的字号相对正文 |
+| `sup_rise` | `0.38` | 0.2 ~ 0.6 | 上标抬高多少，单位 em |
+| `sub_drop` | `0.16` | 0.05 ~ 0.3 | 下标降低多少，单位 em |
 | `quote_indent` | `2.0` | 0 ~ 4；0 为不缩进 | 引用段整体缩进，单位 em |
 | `quote_marker` | `triangle` | triangle \| filled \| none | 首行缩进处的手绘标记：triangle 空心三角，filled 实心三角，none 不画 |
 | `code_scale` | `0.88` | 0.7 ~ 1.0 | 代码字号相对正文 |

@@ -85,6 +85,11 @@ class TextConfig:
     softbreak: str = "auto"  # 段内换行：auto 像 Markdown 一样合并，newline 保留
     table_mode: str = "list"  # 表格：list 按行转成括号列表，skip 直接丢弃（表格线永远不画）
 
+    script_marks: bool = True  # 把 x^2、10^-3、x^{n+1} 画成上标，v_0、a_n、x_{i+1} 画成下标；关闭则原样显示 ^ 和 _
+    script_scale: float = 0.62  # 上下标的字号相对正文
+    sup_rise: float = 0.38  # 上标抬高多少，单位 em
+    sub_drop: float = 0.16  # 下标降低多少，单位 em
+
     # --- 引用与代码 -------------------------------------------------------
     quote_indent: float = 2.0  # 引用段整体缩进，单位 em
     quote_marker: str = "triangle"  # 首行缩进处的手绘标记：triangle 空心三角，filled 实心三角，none 不画
@@ -448,6 +453,10 @@ HINTS = {
     "text.label_max_chars": "0 ~ 12；0 为不把标签挪到括号尖角左侧",
     "text.softbreak": "auto | newline",
     "text.table_mode": "list | skip",
+    "text.script_marks": "true | false",
+    "text.script_scale": "0.5 ~ 0.8",
+    "text.sup_rise": "0.2 ~ 0.6",
+    "text.sub_drop": "0.05 ~ 0.3",
     "text.quote_indent": "0 ~ 4；0 为不缩进",
     "text.quote_marker": "triangle | filled | none",
     "text.code_scale": "0.7 ~ 1.0",

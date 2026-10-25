@@ -1,6 +1,7 @@
 fonts/
 out/
+notes/
+pdfs/
 __pycache__/
 *.egg-info/
 .pytest_cache/
-.venv/

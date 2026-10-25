@@ -33,6 +33,7 @@ README 讲怎么上手，这里按功能把每一项讲清楚：它做什么、�
 | `> 引用` | 整段缩进，首行缩进处手画三角 | `quote_indent`、`quote_marker` |
 | 代码 | 正文颜色，代码块只有左竖线 | `code_font`、`code_rule`、`code_pen`、`code_scale` |
 | 表格 | 禁用，转成括号列表 | `table_mode` |
+| `x^2`、`10^-3`、`x^{n+1}`、`v_0`、`a_n` | 画成真正的上标 / 下标（缩小并抬高 / 降低），不会把 ^ 和 _ 原样写出来；`snake_case`、`a ^ b`（前后有空格）、行内代码里的不处理；`\^` 可强制保留字符 | `script_marks`、`script_scale`、`sup_rise`、`sub_drop` |
 
 ## 4. 字体与排版
 

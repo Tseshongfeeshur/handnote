@@ -46,6 +46,8 @@ class PC:
     x: float = 0.0  # where the glyph's ink starts (ink mode) or its cell starts (advance mode)
     lsb: float = 0.0  # distance from the glyph origin to its ink edge, so the origin is drawn at x - lsb
     gap: float = 0.0  # space after the glyph that is not part of it (underlines stop before it)
+    sc: float = 1.0  # size relative to the line's text (superscripts and subscripts are smaller)
+    shift: float = 0.0  # how far the glyph sits above (+) or below (-) the baseline, in pixels
 
 
 class Layouter:
@@ -95,8 +97,11 @@ class Layouter:
 
     def _pc(self, ch: str, style: P.Style, size: float, code: bool = False) -> PC:
         role = "code" if (code or style.code) else self._role
-        adv, lsb, gap = self._metrics(ch, size, code, role)
-        return PC(ch, style, adv, self.fonts.pick(ch, role), lsb=lsb, gap=gap)
+        t = self.cfg.text
+        sc = t.script_scale if style.script and not code and not style.code else 1.0
+        adv, lsb, gap = self._metrics(ch, size * sc, code, role)
+        shift = (t.sup_rise if style.script > 0 else -t.sub_drop) * size if sc != 1.0 else 0.0
+        return PC(ch, style, adv, self.fonts.pick(ch, role), lsb=lsb, gap=gap, sc=sc, shift=shift)
 
     def _text_width(self, text: str, size: float) -> float:
         return sum(self._adv(c, size) for c in text)
@@ -223,7 +228,7 @@ class Layouter:
                 gx = cx - pc.lsb
                 if pc.style.code and not is_cjk(pc.ch):  # fixed-width cell: centre the glyph in it
                     gx += 0.5 * (pc.adv - self.fonts.advance(pc.ch, size, "code"))
-                self.elements.append(Glyph(pc.ch, gx, y, size, pc.font, pen, lid, kb))
+                self.elements.append(Glyph(pc.ch, gx, y - pc.shift, size * pc.sc, pc.font, pen, lid, kb))
             cx += pc.adv
         self._decorate(line, y, size, lid, kb)
         for kk in range(k, k + n):

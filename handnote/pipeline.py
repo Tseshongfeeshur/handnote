@@ -43,7 +43,7 @@ def run_pipeline(
     cfg = cfg or Config()
     fonts = fonts or load_fontset(cfg.text.fonts, cfg.text.font_dir, cfg.text.heading_font, cfg.text.code_font,
                                   cfg.text.punct_font, cfg.text.latin_font)
-    blocks = parser.parse(markdown, cfg.text.table_mode)
+    blocks = parser.parse(markdown, cfg.text.table_mode, cfg.text.script_marks)
     pages = layout(blocks, cfg, fonts)
 
     root = np.random.SeedSequence(seed if seed is not None else cfg.seed)

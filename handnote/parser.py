@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 from typing import List, Optional, Union
+import re
 
 from markdown_it import MarkdownIt
 
@@ -22,6 +23,7 @@ class Style:
     italic: bool = False
     strike: bool = False
     code: bool = False
+    script: int = 0  # +1 superscript, -1 subscript
 
 
 PLAIN = Style()
@@ -79,11 +81,46 @@ def plain_text(spans: List[Span]) -> str:
     return "".join(s.text for s in spans if s.text not in (SOFT, HARD))
 
 
-def parse(text: str, table_mode: str = "list") -> List[Block]:
+def parse(text: str, table_mode: str = "list", script_marks: bool = True) -> List[Block]:
     md = MarkdownIt("commonmark").enable(["strikethrough", "table"])
     tokens = md.parse(text)
+    global _SCRIPTS
+    _SCRIPTS = script_marks
     blocks, _ = _blocks(tokens, 0, None, table_mode)
     return blocks
+
+
+# x^2, 10^-3, e^x, x^{n+1}, x^(n+1)  and  v_0, a_n, x_{i+1}: handwriting raises or lowers these, it does not write ^ or _
+_SCRIPTS = True
+_EXP = r"[+\-\u2212]?(?:\d+(?:\.\d+)?|[A-Za-z\u03b1-\u03c9\u0391-\u03a9])"
+_SUP = re.compile(r"\^(?:\{([^{}\n]{1,12})\}|\(([^()\n]{1,12})\)|(" + _EXP + "))")
+_SUB = re.compile(r"_(?:\{([^{}\n]{1,12})\}|(\d+|[A-Za-z\u03b1-\u03c9])(?![A-Za-z0-9_]))")
+
+
+def _scripts(text: str, st: Style, prev_ok: bool) -> List[Span]:
+    """Split ``text`` into plain parts and raised/lowered parts.  A mark only counts right after something that can
+    carry it (not at the start of a word or after a space); anything else stays as typed."""
+    if not _SCRIPTS or ("^" not in text and "_" not in text):
+        return [Span(text, st)]
+    out: List[Span] = []
+    pos = 0
+    for m in sorted(list(_SUP.finditer(text)) + list(_SUB.finditer(text)), key=lambda m: m.start()):
+        if m.start() < pos:
+            continue
+        before = text[m.start() - 1] if m.start() else ("x" if prev_ok else " ")
+        if not (before.isalnum() or before in ")]}）】"):
+            continue
+        sup = text[m.start()] == "^"
+        if not sup and "_" in re.search(r"[A-Za-z0-9_]*$", text[:m.start()]).group():
+            continue  # snake_case_names are not subscripts
+        body = next(g for g in m.groups() if g is not None)
+        if m.start() > pos:
+            out.append(Span(text[pos:m.start()], st))
+        out.append(Span(body, replace(st, script=1 if sup else -1)))
+        pos = m.end()
+    if pos < len(text):
+        out.append(Span(text[pos:], st))
+    return out or [Span(text, st)]
 
 
 # ---------------------------------------------------------------- blocks
@@ -181,7 +218,9 @@ def _inline(tok) -> List[Span]:
     st = PLAIN
     for c in tok.children or []:
         ty = c.type
-        if ty in ("text", "text_special"):
+        if ty == "text":
+            spans.extend(_scripts(c.content, st, bool(spans) and spans[-1].text not in (SOFT, HARD) and not spans[-1].text[-1:].isspace()))
+        elif ty == "text_special":
             spans.append(Span(c.content, st))
         elif ty == "softbreak":
             spans.append(Span(SOFT, st))

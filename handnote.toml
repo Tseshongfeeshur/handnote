@@ -1,9 +1,9 @@
 # handnote 配置文件（全部选项，附说明与候选值）
 #
 # 放在下面任一位置，不加 -c 时会自动读取（先找到的生效）：
-#    1. 环境变量 HANDNOTE_CONFIG 指向的文件（设为 none 则不读任何配置文件）
-#    2. 当前目录的 handnote.toml
-#    3. 用户目录：Linux/macOS 是 ~/.config/handnote/config.toml，Windows 是 %APPDATA%\handnote\config.toml
+#   1. 环境变量 HANDNOTE_CONFIG 指向的文件（设为 none 则不读任何配置文件）
+#   2. 当前目录的 handnote.toml
+#   3. 用户目录：Linux/macOS 是 ~/.config/handnote/config.toml，Windows 是 %APPDATA%\handnote\config.toml
 # 命令行 -c 文件.toml 指定别的文件；--no-config 完全不读；--set 段.键=值 在以上之上再覆盖单项。
 # `handnote config --path` 查看当前读到的是哪个文件。
 #
@@ -134,6 +134,22 @@ softbreak = "auto"
 # 表格：list 按行转成括号列表，skip 直接丢弃（表格线永远不画）
 # 候选：list | skip
 table_mode = "list"
+
+# 把 x^2、10^-3、x^{n+1} 画成上标，v_0、a_n、x_{i+1} 画成下标；关闭则原样显示 ^ 和 _
+# 候选：true | false
+script_marks = true
+
+# 上下标的字号相对正文
+# 候选：0.5 ~ 0.8
+script_scale = 0.62
+
+# 上标抬高多少，单位 em
+# 候选：0.2 ~ 0.6
+sup_rise = 0.38
+
+# 下标降低多少，单位 em
+# 候选：0.05 ~ 0.3
+sub_drop = 0.16
 
 # 引用段整体缩进，单位 em
 # 候选：0 ~ 4；0 为不缩进
